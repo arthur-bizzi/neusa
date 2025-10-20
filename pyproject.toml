@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "neusa"
+version = "1.0.0"
+description = ""
+authors = ['Arthur Bizzi', 'Leonardo Moreira', 'Márcio Macedo', 'Leonardo Mendonça', 
+'Christian Oliveira', 'Vitor Balestro', 'Lucas Fernandez', 'Daniel Yukimura', 
+'Pavel Petrov', 'João M. Pereira', 'Tiago Novello', 'Lucas Nissenbaum']
+packages = [
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.14"
+torch = ">=2.8"
+numpy = ">=2.2.6"
+torchdyn = "^1.0.6"
+pandas = "^2.3.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
