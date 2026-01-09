@@ -9,7 +9,7 @@ Lucas Fernandez [2,4], Daniel Yukimura [2], Pavel Petrov [2], João M. Pereira [
 [4] Laboratório Nacional de Computação Científica (LNCC) <br>
 [5] University of Georgia (UGA)
 
-This is the official repository of the paper "Neuro-Spectral Architectures for Causal Physics-Informed Networks", to appear on NeurIPS 2025 (https://neurips.cc/). You can also check the arXiv version: https://arxiv.org/html/2509.04966v1.
+This is the official repository of the paper "Neuro-Spectral Architectures for Causal Physics-Informed Networks", accepted at NeurIPS 2025 ([https://neurips.cc/](https://neurips.cc/virtual/2025/loc/san-diego/poster/119441)). You can also check the arXiv version: https://arxiv.org/pdf/2509.04966
 
 <figure style="text-align:center;">
   <img src="docs/animation.gif" alt="marmousievo" style="display:block; margin:0 auto;">
