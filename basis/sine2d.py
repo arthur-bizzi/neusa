@@ -42,11 +42,11 @@ class SineBasis2D:
         
 
     def dbt(self,u):
-        u_hat = torch.einsum('in,...nm,...jm->ij',self.Cx_inv,u,self.Cy_inv)
+        u_hat = torch.einsum('in,...nm,jm->...ij',self.Cx_inv,u,self.Cy_inv)
         return u_hat
 
     def idbt(self,u_hat):
-        u = torch.einsum('in,...nm,...jm->ij',self.Cx,u_hat,self.Cy)
+        u = torch.einsum('in,...nm,jm->...ij',self.Cx,u_hat,self.Cy)
         return u
 
     def to(self,device):
