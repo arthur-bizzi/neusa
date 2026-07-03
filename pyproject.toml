@@ -7,6 +7,7 @@ authors = ['Arthur Bizzi', 'Leonardo Moreira', 'Márcio Macedo', 'Leonardo Mendo
 'Pavel Petrov', 'João M. Pereira', 'Tiago Novello', 'Lucas Nissenbaum']
 packages = [
 ]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
