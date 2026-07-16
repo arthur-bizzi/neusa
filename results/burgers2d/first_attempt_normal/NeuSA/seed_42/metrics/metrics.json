@@ -1,0 +1,6 @@
+{
+    "relative_l2_error": 0.05133994430103298,
+    "relative_l1_error": 0.04288493901839312,
+    "training_time": 121.75938272476196,
+    "inference_time": 0.25278663635253906
+}

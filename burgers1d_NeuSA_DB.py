@@ -8,7 +8,7 @@ import json
 from math import pi
 from scipy.interpolate import RegularGridInterpolator
 
-from basis.tchebychev1d import TchebychevBasis1D
+from basis.debauchies1dsec import WaveletBasis1D
 from models.linear_spec_layer import LinearSpectralLayer
 from models.vector_fields import HeatLikeVectorField
 from models.mlps import MLP
@@ -19,8 +19,6 @@ from utilities.plot import create_time_evolution_gif
 
 
 def loss_function(hu0,ts,NODE,basis,F,F0):
-    print("hu0 nan:", torch.isnan(hu0).any().item())
-    print("hu0 max abs:", hu0.abs().max().item())
     hu = NODE(hu0,ts)
     Fhu = F(hu)
 
@@ -40,9 +38,9 @@ if __name__ == "__main__":
     parser.add_argument('--dir', type=str,default='free_experiment')    # name of the directory where the results folder will be saved
     parser.add_argument('--seed', type=int,default= 42)    # random seed
     parser.add_argument('--device', type=str, default='cuda:0')
-    parser.add_argument('--steps', type=int, default=10000000)  #no need more 10000
+    parser.add_argument('--steps', type=int, default=10000)  #no need more 10000
     parser.add_argument('--lr', type=float, default=0.01) 
-    parser.add_argument('--freqs', type=int, default=201)
+    parser.add_argument('--freqs', type=int, default=7)
     
     args = parser.parse_args()
     dir_name = args.dir
@@ -60,7 +58,7 @@ if __name__ == "__main__":
     # domain, basis and grid
     domain_x = [-1.0,1.0]
     M = args.freqs
-    basis = TchebychevBasis1D(M, domain_x)
+    basis = WaveletBasis1D(4, M, domain_x)
     xs = basis.x
     
     domain_t = [0.0,1.0]
@@ -95,14 +93,6 @@ if __name__ == "__main__":
     NODE = NODE.to(device)
     F = F.to(device)
     F0 = F0.to(device)
-    
-    # Teste sur une trajectoire de plus en plus longue pour voir où ça bascule
-    for n_steps in [2, 5, 10, 20, 50]:
-        ts_test = torch.linspace(0, ts[-1].item(), n_steps)
-        hu_test = NODE(hu0, ts_test)
-        has_nan = torch.isnan(hu_test).any().item()
-        max_val = hu_test.abs().max().item() if not has_nan else float('nan')
-        print(f"n_steps={n_steps}: nan={has_nan}, max_abs={max_val}")
 
     trainer = AdamTrainer(NODE.parameters(),
                     adam_lr=lr,

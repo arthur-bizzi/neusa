@@ -1,4 +1,3 @@
-cat << 'EOF' > /mnt/user-data/outputs/wavelet_basis_1d.py
 import math
 import torch
 
@@ -80,7 +79,7 @@ class WaveletBasis1D:
         self.cascade_iters = cascade_iters
 
         # Filter coefficients
-        self.h = torch.tensor(_DB_FILTERS[p], dtype=torch.float64)
+        self.h = torch.tensor(_DB_FILTERS[p])
 
         # Support of connection coefficients
         self.n_min = -(2 * p - 2)
@@ -120,11 +119,11 @@ class WaveletBasis1D:
         grid_size = support * fine + 1
 
         # Init: box function on [0, 1)
-        phi = torch.zeros(grid_size, dtype=torch.float64)
+        phi = torch.zeros(grid_size)
         phi[:fine] = 1.0
 
         for _ in range(self.cascade_iters):
-            phi_new = torch.zeros(grid_size, dtype=torch.float64)
+            phi_new = torch.zeros(grid_size)
             for k in range(nf):
                 hk = h[k].item()
                 for i in range(grid_size):
@@ -149,7 +148,7 @@ class WaveletBasis1D:
         phi, fine = self._cascade()
         grid_size = len(phi)
 
-        Wx = torch.zeros((M, M), dtype=torch.float64)
+        Wx = torch.zeros((M, M))
         for j in range(M):
             for k in range(M):
                 arg = (j - k) % M
@@ -166,7 +165,7 @@ class WaveletBasis1D:
 
         def idx(n): return n - n_min
 
-        A = torch.zeros((size, size), dtype=torch.float64)
+        A = torch.zeros((size, size))
         for n in range(n_min, n_max + 1):
             for l in range(nf):
                 for m in range(nf):
@@ -174,14 +173,13 @@ class WaveletBasis1D:
                     if n_min <= rhs_n <= n_max:
                         A[idx(n), idx(rhs_n)] += 2 * h[l] * h[m]
 
-        eigen_eq = A - torch.eye(size, dtype=torch.float64)
+        eigen_eq = A - torch.eye(size)
         norm_row = torch.tensor(
             [float(n) for n in range(n_min, n_max + 1)],
-            dtype=torch.float64
         ).unsqueeze(0)
 
         system = torch.vstack([eigen_eq, norm_row])
-        rhs = torch.zeros(size + 1, dtype=torch.float64)
+        rhs = torch.zeros(size + 1)
         rhs[-1] = -1.0
 
         result = torch.linalg.lstsq(system, rhs.unsqueeze(1))
@@ -193,7 +191,7 @@ class WaveletBasis1D:
         M = self.M
         gamma = self.gamma
 
-        D = torch.zeros((M, M), dtype=torch.float64)
+        D = torch.zeros((M, M))
         for j in range(M):
             for k in range(M):
                 n = (j - k) % M
