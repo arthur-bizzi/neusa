@@ -19,13 +19,11 @@ from utilities.plot import create_time_evolution_gif
 
 
 def loss_function(hu0,ts,NODE,basis,F,F0):
-    print("hu0 nan:", torch.isnan(hu0).any().item())
-    print("hu0 max abs:", hu0.abs().max().item())
     hu = NODE(hu0,ts)
     Fhu = F(hu)
 
     u = basis.idbt(hu)
-    u_x = basis.idbt(hu @ basis.D)
+    u_x = basis.idbt(hu @ basis.D.T)
     
     u_t = basis.idbt(Fhu)
     nu_u_xx = basis.idbt(F0(hu))
@@ -40,9 +38,9 @@ if __name__ == "__main__":
     parser.add_argument('--dir', type=str,default='free_experiment')    # name of the directory where the results folder will be saved
     parser.add_argument('--seed', type=int,default= 42)    # random seed
     parser.add_argument('--device', type=str, default='cuda:0')
-    parser.add_argument('--steps', type=int, default=10000000)  #no need more 10000
-    parser.add_argument('--lr', type=float, default=0.01) 
-    parser.add_argument('--freqs', type=int, default=201)
+    parser.add_argument('--steps', type=int, default=10000)  #no need more 10000
+    parser.add_argument('--lr', type=float, default=0.000001) 
+    parser.add_argument('--freqs', type=int, default=13)
     
     args = parser.parse_args()
     dir_name = args.dir
@@ -79,9 +77,9 @@ if __name__ == "__main__":
     
     # neural networks and NODE
     in_dim = len(xs)
-    hidden_dim = 6 * in_dim
+    hidden_dim = 8 * in_dim
     out_dim = in_dim
-    num_hidden_layers = 2
+    num_hidden_layers = 4
 
     F_neural = MLP(in_dim,hidden_dim,out_dim,num_hidden_layers)
     F = HeatLikeVectorField(F_neural,F0,model_weight=0.1)
@@ -96,13 +94,6 @@ if __name__ == "__main__":
     F = F.to(device)
     F0 = F0.to(device)
     
-    # Teste sur une trajectoire de plus en plus longue pour voir où ça bascule
-    for n_steps in [2, 5, 10, 20, 50]:
-        ts_test = torch.linspace(0, ts[-1].item(), n_steps)
-        hu_test = NODE(hu0, ts_test)
-        has_nan = torch.isnan(hu_test).any().item()
-        max_val = hu_test.abs().max().item() if not has_nan else float('nan')
-        print(f"n_steps={n_steps}: nan={has_nan}, max_abs={max_val}")
 
     trainer = AdamTrainer(NODE.parameters(),
                     adam_lr=lr,

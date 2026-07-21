@@ -23,7 +23,7 @@ def loss_function(hu0,ts,NODE,basis,F,F0):
     Fhu = F(hu)
 
     u = basis.idbt(hu)
-    u_x = basis.idbt(hu @ basis.D)
+    u_x = basis.diff(u)
     
     u_t = basis.idbt(Fhu)
     nu_u_xx = basis.idbt(F0(hu))
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int,default= 42)    # random seed
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--steps', type=int, default=10000)  #no need more 10000
-    parser.add_argument('--lr', type=float, default=0.01) 
-    parser.add_argument('--freqs', type=int, default=7)
+    parser.add_argument('--lr', type=float, default=0.001) 
+    parser.add_argument('--freqs', type=int, default=5)
     
     args = parser.parse_args()
     dir_name = args.dir
@@ -77,13 +77,13 @@ if __name__ == "__main__":
     
     # neural networks and NODE
     in_dim = len(xs)
-    hidden_dim = 6 * in_dim
+    hidden_dim = 4 * in_dim
     out_dim = in_dim
     num_hidden_layers = 2
 
     F_neural = MLP(in_dim,hidden_dim,out_dim,num_hidden_layers)
     F = HeatLikeVectorField(F_neural,F0,model_weight=0.1)
-    NODE = NeuralODE(F,solver='rk4',sensitivity='autograd',return_t_eval=False)
+    NODE = NeuralODE(F,solver='rk4',sensitivity='autograd', return_t_eval=False)
 
     
     # training
